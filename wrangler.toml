@@ -1,0 +1,13 @@
+name = "stak-task-so7en"
+main = "src/main.js"
+compatibility_date = "2025-08-03"
+
+[vars]
+PROJECT_ID = "stak-task-so7en"
+CLIENT_EMAIL = "stak-task-so7en@stak-task-so7en.iam.gserviceaccount.com"
+ 
+[placement]
+mode = "smart"
+
+[build]
+command = "npm install"
