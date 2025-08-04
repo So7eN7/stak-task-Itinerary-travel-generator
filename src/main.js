@@ -41,6 +41,7 @@ export default {
       const { destination, durationDays } = await request.json();
       const jobId = crypto.randomUUID(); // Using this instead of uuidv4 to avoid being dependant on node
       const createdAt = new Date().toISOString();
+      //const completedAt = new Date();
 
       // Document structure for Firestore
       const doc = {
@@ -72,17 +73,16 @@ async function generateItineraryAndUpdate(jobId, destination, durationDays, toke
     // Validate with Zod
     const validated = ItinerarySchema.parse({ itinerary: rawItinerary });
 
-    const completedAt = new Date().toISOString();
     await updateFirestore(jobId, {
-      itinerary: validated.itinerary,
-      status: "completed",
-      completedAt
+    itinerary: validated.itinerary,
+    status: "completed",
+    completedAt: new Date().toISOString()    
     }, token, env);
   } catch (err) {
     await updateFirestore(jobId, {
       status: "failed",
       error: err.message,
-      completedAt: new Date().toISOString()
+      completedAt: new Date()
     }, token, env);
   }
 }
@@ -105,6 +105,7 @@ async function callLLM(destination, durationDays, apiKey) {
   const prompt = `
 Generate a ${durationDays}-day travel itinerary for ${destination}.
 Return only valid JSON matching this format:
+
 {
   "itinerary": [
     {
@@ -120,10 +121,9 @@ Return only valid JSON matching this format:
     }
   ]
 }
-Only return the JSON. No explanation or prose.
-  `.trim();
 
-  // API request to OpenAI
+Only return this JSON. No markdown, no prose.
+`.trim();  
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -139,9 +139,17 @@ Only return the JSON. No explanation or prose.
 
   const json = await res.json();
   if (!res.ok) throw new Error(json.error?.message || "OpenAI API error");
+  
+  const content = json.choices[0].message.content;
+
+  const cleaned = content
+    .trim()
+    .replace(/^```(?:json)?/, '')
+    .replace(/```$/, '')
+    .trim();
 
   // Parse the itinerary from the LLM response
-  const parsed = JSON.parse(json.choices[0].message.content);
+  const parsed = JSON.parse(cleaned);
   return parsed.itinerary;
 }
 
@@ -235,6 +243,10 @@ async function getFirestoreDocument(jobId, token, env) {
 }
 
 // Some util functions
+function cleanJsonString(str) {
+  return str.trim().replace(/^```json\s*/, '').replace(/\s*```$/, '').trim();
+}
+
 function strToArrayBuffer(pem) {
   const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\n/g, '');
   const binary = atob(b64);
