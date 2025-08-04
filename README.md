@@ -86,7 +86,7 @@ Initiates a new itinerary generation job.
 ```bash
 curl -X POST https://your-worker.workers.dev/ \
      -H "Content-Type: application/json" \
-     -d '{"destination":"Paris","durationDays":3}'
+     -d '{"destination":"Paris, France","durationDays":3}'
 ```
 
 **JavaScript Fetch Example**:
@@ -95,7 +95,7 @@ async function createItinerary() {
   const response = await fetch('https://your-worker.workers.dev/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ destination: 'Paris', durationDays: 3 })
+    body: JSON.stringify({ destination: 'Paris, France', durationDays: 3 })
   });
   const data = await response.json();
   console.log(data); // { jobId: "uuid" }
