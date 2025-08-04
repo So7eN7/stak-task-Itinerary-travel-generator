@@ -174,3 +174,35 @@ Only return this JSON. No markdown, no prose.
 - **LLM API Errors**: Verify the `LLM_API_KEY` is valid and the OpenAI API is accessible.
 - **404 on /status/{jobId}**: Confirm the `jobId` exists in Firestore (check the `itineraries` collection in the Google Cloud Console).
 - **CORS Issues**: The API includes `Access-Control-Allow-Origin: *` to allow cross-origin requests.
+
+## Cloudflare Pages 
+1. **Push your project to GitHub**
+
+   > For example mine is [stak-task-ui][https://github.com/so7en7/stak-task-ui/]
+
+2. **Create a Cloudflare Pages project**
+
+   - Go to `Cloudflare Pages Dashboard`
+   - Click **Create a project**
+   - Select your GitHub repo
+   - Click **"Begin setup"**
+
+3. **Configure build settings**
+
+   - **Framework preset:** `None`
+   - **Build command:**
+
+     ```bash
+     cd stak-task-ui && npm install && npm run build
+     ```
+
+   - **Output directory:**
+
+     ```
+     stak-task-ui/build
+     ```
+   - **Note: These might change based on what framework you are using this is for sveltekit!**
+4. **Deploy**
+
+   Click **Save and Deploy**. The first build will take a few minutes.
+
