@@ -178,7 +178,7 @@ Only return this JSON. No markdown, no prose.
 ## Cloudflare Pages 
 1. **Push your project to GitHub**
 
-   > For example mine is [stak-task-ui][https://github.com/so7en7/stak-task-ui/]
+   > For example mine is [stak-task-ui](https://github.com/so7en7/stak-task-ui/)
 
 2. **Create a Cloudflare Pages project**
 
